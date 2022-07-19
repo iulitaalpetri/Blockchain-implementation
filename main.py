@@ -1,16 +1,34 @@
-# This is a sample Python script.
+from hashlib import sha256
+# The SHA-256 is a hashing algorithm created by the NSA back in 2001 which takes an input
+# of any size and converts it to an output of fixed size. The beauty of the SHA-256 is t
+# hat the Output is close to impossible to decode thus ensuring security.
+sender = 'Moeed'
+genesis_block = {'previous_hash': 'XYZ',
+                 'index': 0,
+                 'transactions': [], 'proof': 0}
+blockchain = [genesis_block]
+open_transactions = []
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def get_transaction():# the sender introduces the transaction amount and the receiver
+    recipient = input('Enter your recipient')
+    amount = input('Enter your amount')
+    return (recipient,amount)
 
+while True:
+    I = input('Enter your choice')
+    if I == '1':
+        data = get_transaction()
+        recipient, amount = data
+        transaction = {'sender': sender,
+                      'recipient': recipient,
+                      'amount': amount}
+        open_transactions.append(transaction)
+        print(open_transactions)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def hash_block(last_block):
+    previous_hash = ''
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    for keys in last_block:
+        previous_hash = previous_hash + str(last_block[keys])
+    hash = sha256(json.dumps(previous_hash).encode('utf-8')).hexdigest()
+    return hash
