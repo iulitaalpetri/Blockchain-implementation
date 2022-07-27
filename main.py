@@ -1,10 +1,12 @@
 from hashlib import sha256
 import json #text written with java script object notations
+import pickle
 # The SHA-256 is a hashing algorithm created by the NSA back in 2001 which takes an input
 # of any size and converts it to an output of fixed size. The beauty of the SHA-256 is t
 # hat the Output is close to impossible to decode thus ensuring security.
 
 sender='sender'
+# an example to begin with
 genesis_block={
     'previous_hash':'XYZ', 'index':0, 'transaction': [], 'proof':0
 }
@@ -14,22 +16,24 @@ def get_transcation():
     recipient= input('Enter your recipient:')
     amount=input('Enter ypur amount:')
     return (recipient, amount)
-while True:
-    I=input('Enter your choice:')
-    if I=='1':
-        data= get_transcation()
-        recipient, amount= data
-        transaction={'sender':sender, 'recipient': recipient, 'amount': amount}
-        open_transactions.append(transaction)
-        print(open_transactions)
+# while True:
+#     I=input('Enter your choice:')
+#     if I=='1':
+#         data= get_transcation()
+#         recipient, amount= data
+#         transaction={'sender':sender, 'recipient': recipient, 'amount': amount}
+#         open_transactions.append(transaction)
+#         print(open_transactions)
 
 def hash_block(last_block):
     previous_hash=''
     for keys in last_block:
         previous_hash= previous_hash+ str(last_block[keys])
+        #json transfers data between server and web applications
+        #dumps- converts the Python objects into json objects
         hash = sha256(json.dumps(previous_hash).encode('utf-8')).hexdigest()
     return hash
-
+# the output hash has to start with 00
 def proof_of_work():
     previous_hash=''
     proof=0
@@ -38,22 +42,17 @@ def proof_of_work():
         previous_hash= previous_hash + str(last_block[keys])
 
     guess_hash= previous_hash+ str(proof)
-    hash= sha256(hash.encode('utf-8')).hexdigest()
+
+    hash = sha256(json.dumps(guess_hash).encode('utf-8')).hexdigest()
     proof= proof+ 1
     while hash[0:2]!= '00':
         guess_hash = previous_hash + str(proof)
-        hash = sha256(hash.encode('utf-8')).hexdigest()
+        hash = sha256(json.dumps(guess_hash).encode('utf-8')).hexdigest()
         proof = proof + 1
         print(hash)
     return proof
 
-def hash_block(last_block):
-    previous_hash=''
 
-    for keys in last_block:
-        previous_hash= previous_hash+ str(last_block[keys])
-    hash= sha256(json.dumps(previous_hash).encode('utf-8')).hexdigest()
-    return hash
 
 def mine_block():
     last_block= blockchain[-1]
@@ -83,22 +82,25 @@ def verify_chain():
             return False
     return True
 
-
+def alter_block():
+    blockchain[0] =    {'previous_hash':'ABC',
+                 'index':0,
+                 'transactions':[],'proof':0}
 while True:
     I = input('Enter your choice')
     print('1 to recieve transactions')
     print('2 to mine block')
     print('3 to alter block')
     if I == '1':
-        data = get_transaction()
+        data = get_transcation()
         recipient, amount = data
-        transaction = {'sender': owner,
+        transaction = {'sender': sender,
                        'recipient': recipient,
                        'amount': amount}
 
         open_transactions.append(transaction)
         print(open_transactions)
-        save_data()
+       # save_data()
 
     if I == '2':
         mine_block()
